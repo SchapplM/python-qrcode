@@ -9,10 +9,10 @@ import sys
 import optparse
 import os
 import qrcode
-# The next two lines added to get the terminal to display properly on MS platforms
-import colorama
-
-colorama.init()
+# The next block is added to get the terminal to display properly on MS platforms
+if sys.platform.startswith(('win', 'cygwin')):
+    import colorama
+    colorama.init()
 
 default_factories = {
     'pil': 'qrcode.image.pil.PilImage',
@@ -30,8 +30,12 @@ error_correction = {
 }
 
 
-def main(args=sys.argv[1:]):
-    parser = optparse.OptionParser(usage=__doc__.strip())
+def main(args=None):
+    if args is None:
+        args = sys.argv[1:]
+    from pkg_resources import get_distribution
+    version = get_distribution('qrcode').version
+    parser = optparse.OptionParser(usage=__doc__.strip(), version=version)
     parser.add_option(
         "--factory", help="Full python path to the image factory class to "
         "create the image with. You can use the following shortcuts to the "

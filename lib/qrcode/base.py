@@ -117,7 +117,7 @@ RS_BLOCK_TABLE = [
     [5, 109, 87, 1, 110, 88],
     [5, 65, 41, 5, 66, 42],
     [5, 54, 24, 7, 55, 25],
-    [11, 36, 12],
+    [11, 36, 12, 7, 37, 13],
 
     # 16
     [5, 122, 98, 1, 123, 99],
@@ -288,16 +288,13 @@ class Polynomial:
         if not num:  # pragma: no cover
             raise Exception("%s/%s" % (len(num), shift))
 
-        offset = 0
-
-        for item in num:
-            if item != 0:
+        for offset in range(len(num)):
+            if num[offset] != 0:
                 break
+        else:
             offset += 1
 
-        self.num = [0] * (len(num) - offset + shift)
-        for i in range(len(num) - offset):
-            self.num[i] = num[i + offset]
+        self.num = num[offset:] + [0] * shift
 
     def __getitem__(self, index):
         return self.num[index]
@@ -323,8 +320,6 @@ class Polynomial:
             return self
 
         ratio = glog(self[0]) - glog(other[0])
-
-        num = self[:]
 
         num = [
             item ^ gexp(glog(other_item) + ratio)
